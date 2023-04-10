@@ -1,0 +1,16 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: true
+  application:
+    name: toyota-backend
+    description: 32bit project
+    author: hadi
+    version: '@project.version@'
+spring:
+  profiles:
+    active: dev
