@@ -38,7 +38,7 @@ public class User
     @NotBlank(message = "Cannot be empty.")
     @NotNull(message = "Cannot be null.")
     @Size(max = 40)
-    @Column(name="username")
+    @Column(name = "username")
     private String username;
 
     @NaturalId(mutable = true)
@@ -51,10 +51,10 @@ public class User
 
     @NotBlank(message = "Cannot be empty.")
     @NotNull(message = "Cannot be null.")
-    @Column(name="password")
+    @Column(name = "password")
     private String password;
 
-    @Column(name="active")
+    @Column(name = "active")
     @NotNull(message = "Cannot be null.")
     private Boolean active;
 

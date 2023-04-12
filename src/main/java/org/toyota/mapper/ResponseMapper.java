@@ -42,12 +42,11 @@ public class ResponseMapper
      */
     public ResponseEntity<?> ResponseList(List<?> entityList)
     {
-        if(entityList.isEmpty())
+        if (entityList.isEmpty())
         {
             logger.error("Empty list");
             return ResponseEntity.noContent().build();
-        }
-        else
+        } else
         {
             return ResponseEntity.ok().body(entityList);
         }

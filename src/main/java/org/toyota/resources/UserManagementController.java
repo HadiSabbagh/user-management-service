@@ -27,11 +27,12 @@ public class UserManagementController
     @Autowired
     UserManagement userManagementService;
 
+
     private final Logger logger = LogManager.getLogger(UserManagementController.class);
 
 
     @GetMapping("/list-users")
-    public ResponseEntity<?> listUsers()
+    public ResponseEntity<?> listUsers(@RequestHeader("Authorization") String token)
     {
         return new ResponseMapper().ResponseList(userManagementService.findAll());
     }
