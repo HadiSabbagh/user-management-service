@@ -10,55 +10,56 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.toyota.auth.security.services.UserDetailsServiceImpl;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AuthTokenFilter extends OncePerRequestFilter
 {
-    @Autowired
-    private JwtUtils jwtUtils;
+
+
+
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    WebClient webClient;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
-
-    public String parseJwt(HttpServletRequest request)
-    {
-        String headerAuth = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer "))
-            return headerAuth.substring(7);
-
-        return null;
-    }
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException
     {
-        try
+        webClient = WebClient.builder().build();
+
+        TokenValidResponse responseBody = webClient.get()
+                                                  .uri("http://auth-service/api/auth/validateToken")
+                                                  .header("Authorization", request.getHeader("Authorization"))
+                                                  .retrieve().bodyToMono(TokenValidResponse.class).block();
+
+
+        if (responseBody.getUsername() != null)
         {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt))
+            try
             {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
-
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-                        userDetails.getAuthorities());
+                List<String> roles = responseBody.getAuthorities();
+                List<GrantedAuthority> authorities = roles.stream()
+                                                             .map(SimpleGrantedAuthority::new)
+                                                             .collect(Collectors.toList());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(responseBody.getUsername(), null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e)
+            {
+                logger.error("Cannot set user authentication: {0}", e);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Cannot set user authentication");
             }
-        } catch (Exception e)
-        {
-            logger.error("Cannot set user authentication: {0}", e);
         }
         filterChain.doFilter(request, response);
     }
