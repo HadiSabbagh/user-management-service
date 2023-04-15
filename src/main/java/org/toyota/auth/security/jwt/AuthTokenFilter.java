@@ -39,7 +39,7 @@ public class AuthTokenFilter extends OncePerRequestFilter
         webClient = WebClient.builder().build();
 
         TokenValidResponse responseBody = webClient.get()
-                                                  .uri("http://auth-service-1/api/auth/validateToken")
+                                                  .uri("http://micro-backendproject-auth-service-1:8080/api/auth/validateToken")
                                                   .header("Authorization", request.getHeader("Authorization"))
                                                   .retrieve().bodyToMono(TokenValidResponse.class).block();
 
