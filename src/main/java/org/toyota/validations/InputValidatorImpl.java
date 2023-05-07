@@ -30,6 +30,11 @@ public class InputValidatorImpl implements InputValidator
 
     private final Logger logger = LogManager.getLogger(InputValidatorImpl.class);
 
+    /**
+     * @param userDTO This method takes the userDTO and calls UserDTOConverter to get User out of it.
+     * Then it calls Generic Validator to get Constraint Violations set from User
+     * @return List of strings violations messages.
+     */
     @Override
     public List<String> validateUserInput(UserDTO userDTO)
     {

@@ -16,7 +16,7 @@ import java.util.Set;
 
 
 /**
- * This class is responsible for checking constraint violations when accessing the database.
+ * This class is responsible for checking constraint violations (such as a username already existing) when accessing the database.
  */
 @Component
 public class DatabaseValidatorImpl implements DatabaseValidator
