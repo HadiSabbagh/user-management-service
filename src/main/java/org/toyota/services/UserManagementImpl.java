@@ -13,7 +13,7 @@ import org.toyota.dto.UserDTO;
 import org.toyota.mapper.MessageResponse;
 import org.toyota.mapper.UserDTOConverter;
 import org.toyota.operationResult.DatabaseOpResult;
-import org.toyota.validations.DatabaseValidator;
+import org.toyota.validations.DatabaseValidatorImpl;
 import org.toyota.validations.InputValidatorImpl;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 
 /**
- * This service is responsible for crud operations.
+ * This service is responsible for crud operations and passing requests to the database through UserRepository.
  */
 @Service
 @Transactional
@@ -36,13 +36,13 @@ public class UserManagementImpl implements UserManagement
     UserDTOConverter userConverter;
 
     @Autowired
-    DatabaseValidator databaseValidator;
-
-
-    PasswordEncoder encoder = new BCryptPasswordEncoder();
+    DatabaseValidatorImpl databaseValidator;
 
     @Autowired
     InputValidatorImpl inputValidator;
+
+    PasswordEncoder encoder = new BCryptPasswordEncoder();
+
 
     private final Logger logger = LogManager.getLogger(UserManagementImpl.class);
 

@@ -32,6 +32,10 @@ public class AuthTokenFilter extends OncePerRequestFilter
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
+    /**
+     * Communicate with auth-service through webclient and receive a response whether the jwt token is valid or not.
+     * Depending on the response, we either continue with the requests or return unauthorized.
+     */
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException
     {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.toyota.dto.UserDTO;
 import org.toyota.mapper.ResponseMapper;
 import org.toyota.services.UserManagement;
+import org.toyota.services.UserManagementImpl;
 
 
 /**
@@ -25,7 +26,7 @@ public class UserManagementController
 {
 
     @Autowired
-    UserManagement userManagementService;
+    UserManagementImpl userManagementService;
 
 
     private final Logger logger = LogManager.getLogger(UserManagementController.class);
