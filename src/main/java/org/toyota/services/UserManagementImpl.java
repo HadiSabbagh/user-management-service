@@ -18,6 +18,7 @@ import org.toyota.validations.InputValidatorImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -29,11 +30,8 @@ import java.util.Optional;
 public class UserManagementImpl implements UserManagement
 {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    UserDTOConverter userConverter;
+    private final UserRepository userRepository;
+    private final UserDTOConverter userConverter;
 
     @Autowired
     DatabaseValidatorImpl databaseValidator;
@@ -43,9 +41,7 @@ public class UserManagementImpl implements UserManagement
 
     PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-
     private final Logger logger = LogManager.getLogger(UserManagementImpl.class);
-
 
     public UserManagementImpl(UserRepository userRepository, UserDTOConverter userConverter)
     {
@@ -57,15 +53,29 @@ public class UserManagementImpl implements UserManagement
     @Override
     public Optional<UserDTO> findByEmail(String email)
     {
-        UserDTO userDto = userConverter.user_To_DTO(userRepository.findByEmail(email).get());
-        return Optional.ofNullable(userDto);
+        // If a user found, map it to its dto, else return an empty user.
+        try
+        {
+            UserDTO userDTO = userConverter.user_To_DTO(userRepository.findByEmail(email).get());
+            return Optional.of(userDTO);
+        } catch (NoSuchElementException elementException)
+        {
+            return Optional.empty();
+        }
+
     }
 
     @Override
     public Optional<UserDTO> findByUsernameOrEmail(String username, String email)
     {
-        UserDTO userDto = userConverter.user_To_DTO(userRepository.findByUsernameOrEmail(username, email).get());
-        return Optional.ofNullable(userDto);
+        try
+        {
+            UserDTO userDto = userConverter.user_To_DTO(userRepository.findByUsernameOrEmail(username, email).get());
+            return Optional.ofNullable(userDto);
+        } catch (NoSuchElementException elementException)
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -85,8 +95,14 @@ public class UserManagementImpl implements UserManagement
     @Override
     public Optional<UserDTO> findByUsername(String username)
     {
-        UserDTO userDto = userConverter.user_To_DTO(userRepository.findByUsername(username).get());
-        return Optional.ofNullable(userDto);
+        try
+        {
+            UserDTO userDto = userConverter.user_To_DTO(userRepository.findByUsername(username).get());
+            return Optional.ofNullable(userDto);
+        } catch (NoSuchElementException elementException)
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
