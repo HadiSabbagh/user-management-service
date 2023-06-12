@@ -96,7 +96,7 @@ class UserManagementImplTest
     }
 
     /**
-     * Test a user exists by email
+     * Test if a user exists by email
      */
     @Test
     void doesExistByEmail()
